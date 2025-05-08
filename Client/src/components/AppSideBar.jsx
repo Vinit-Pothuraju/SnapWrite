@@ -23,7 +23,7 @@ const AppSideBar = () => {
   return (
     <Sidebar>
     <SidebarHeader className="bg-white ">
-      <img src={logo} width={200}/>
+      <img src={logo} width={50}/>
     </SidebarHeader>
     <SidebarContent className="bg-white ">
       <SidebarGroup />
