@@ -2,6 +2,7 @@ import React from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import logo from '@/assets/images/logo.png'
 import {
   Form,
   FormControl,
@@ -11,42 +12,67 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RouteSignIn } from "@/helpers/RouteName";
+import { getEnv } from "@/helpers/getenv";
+import { showToast } from "@/helpers/showToast";
 const SignUP = () => {
+  const navigate=useNavigate()
+
+
   const formSchema = z.object({
     username: z.string().min(3, { message: "Name must be 3 character long" }),
     email: z.string().email(),
     password: z.string().min(8, {
       message: "password must be length of 8 or more",
     }),
-    confirmPassword: z
+    confirmpassword: z
       .string()
-      .refine(data=> data.password === data.confirmPassword, {
+      .refine((data) => data.password === data.confirmpassword, {
         message: `Password does&apos;t match`,
       }),
   });
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username:"",
+      username: "",
       email: "",
       password: "",
-      confirmPassword:"",
+      confirmpassword: "",
     },
   });
-  function onSubmit(values) {
-    console.log(values);
+  async function onSubmit(values) {
+
+    try {
+      console.log(values);
+      const response = await fetch(`${getEnv('VITE_API_BASE_URL')}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+      const data=await response.json()
+      if(!response.ok){
+        showToast('error',data.message)
+        console.log(data.message);
+      }
+      navigate(RouteSignIn)
+      showToast('success',data.message)
+
+    } catch (error) {
+      showToast('error',error.message)
+      console.log(error.message);
+    }
   }
 
   return (
     <div className="flex justify-center items-center h-screen w-screen">
-      <Card className="w-[400px] p-5">
-        <h1 className="text-2xl font-bold text-center mb-4">
-          Create Account In SnapWrite
+      <Card className="w-[450px] p-5">
+        <h1 className="text-2xl font-bold text-center mb-4 flex justify-center items-center">
+          Create Account In <span className="text-green-500 flex justify-center items-center gap-2 ml-2"> <img src={logo} width={40} /> SnapWrite</span> 
         </h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -60,7 +86,7 @@ const SignUP = () => {
                     <FormControl>
                       <Input placeholder="Enter Your Username" {...field} />
                     </FormControl>
-                    
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -76,7 +102,7 @@ const SignUP = () => {
                     <FormControl>
                       <Input placeholder="Enter Your Email" {...field} />
                     </FormControl>
-                    
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -90,9 +116,13 @@ const SignUP = () => {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter Your PassWord" {...field} />
+                      <Input
+                        type="password"
+                        placeholder="Enter Your PassWord"
+                        {...field}
+                      />
                     </FormControl>
-                    
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -107,11 +137,12 @@ const SignUP = () => {
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
                       <Input
+                        type="password"
                         placeholder="Enter Your PassWord again"
                         {...field}
                       />
                     </FormControl>
-                 
+
                     <FormMessage />
                   </FormItem>
                 )}

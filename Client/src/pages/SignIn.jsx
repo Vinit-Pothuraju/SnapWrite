@@ -1,6 +1,7 @@
 import React from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import logo from '@/assets/images/logo.png'
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -35,9 +36,9 @@ const SignIn = () => {
 
   return (
     <div className="flex justify-center items-center h-screen w-screen">
-      <Card className="w-[400px] p-5">
-        <h1 className="text-2xl font-bold text-center mb-4">
-          Login Into SnapWrite
+      <Card className="w-[450px] p-5">
+        <h1 className="text-2xl font-bold text-center mb-4 flex justify-center items-center">
+          Login Into <span className="text-green-500 flex justify-center items-center gap-2 ml-2"> <img src={logo} width={40} /> SnapWrite</span> 
         </h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
