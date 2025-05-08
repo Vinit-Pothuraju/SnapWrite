@@ -1,6 +1,6 @@
 # Ignore environment variables
 .env
-
+/client/
 # Node modules
 node_modules/
 
