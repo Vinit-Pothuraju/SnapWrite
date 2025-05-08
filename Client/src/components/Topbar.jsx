@@ -5,6 +5,7 @@ import { Button } from './ui/button'
 import { LuLogIn } from "react-icons/lu";
 import { Link } from 'react-router-dom';
 import SearchBox from './SearchBox';
+import { RouteSignIn } from '@/helpers/RouteName';
 const Topbar = () => {
   return (
     <div className='flex justify-between items-center h-16 fixed w-full z-20 bg-white px-5 border-b'>
@@ -16,7 +17,7 @@ const Topbar = () => {
       </div>
       <div>
         <Button asChild  className='rounded-full'>
-          <Link  to="">
+          <Link  to={RouteSignIn}>
               SignIn
               <LuLogIn/>
           </Link>
