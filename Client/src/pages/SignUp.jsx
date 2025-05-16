@@ -20,6 +20,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { RouteSignIn } from "@/helpers/RouteName";
 import { getEnv } from "@/helpers/getenv";
 import { showToast } from "@/helpers/showToast";
+import GoogleLogin from "@/components/GoogleLogin";
 const SignUP = () => {
   const navigate=useNavigate()
 
@@ -56,11 +57,13 @@ const SignUP = () => {
       });
       const data=await response.json()
       if(!response.ok){
-        showToast('error',data.message)
-        console.log(data.message);
+        return showToast('error',data.message)
+        
       }
-      navigate(RouteSignIn)
-      showToast('success',data.message)
+      
+        navigate(RouteSignIn)
+        showToast('success',data.message)
+           
 
     } catch (error) {
       showToast('error',error.message)
@@ -74,6 +77,12 @@ const SignUP = () => {
         <h1 className="text-2xl font-bold text-center mb-4 flex justify-center items-center">
           Create Account In <span className="text-green-500 flex justify-center items-center gap-2 ml-2"> <img src={logo} width={40} /> SnapWrite</span> 
         </h1>
+        <div className="">
+          <GoogleLogin/>
+          <div className="border my-5 flex justify-center items-center">
+            <span className="absolute bg-white text-sm">Or</span>
+          </div>
+        </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="mb-3">

@@ -1,7 +1,7 @@
 import React from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import logo from '@/assets/images/logo.png'
+import logo from "@/assets/images/logo.png";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -14,9 +14,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Link } from "react-router-dom";
-import { RouteSignUP } from "@/helpers/RouteName";
+import { Link, useNavigate } from "react-router-dom";
+import { RouteIndex, RouteSignUP } from "@/helpers/RouteName";
+import { showToast } from "@/helpers/showToast";
+import { getEnv } from "@/helpers/getenv";
+import GoogleLogin from "@/components/GoogleLogin";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/redux/user/user.slice";
+
+
 const SignIn = () => {
+  const dispatch=useDispatch()
+  const Navigate = useNavigate();
   const formSchema = z.object({
     email: z.string().email(),
     password: z.string().min(8, {
@@ -30,16 +39,52 @@ const SignIn = () => {
       password: "",
     },
   });
-  function onSubmit(values) {
-    console.log(values);
+  async function onSubmit(values) {
+    try {
+      console.log(values);
+      const response = await fetch(
+        `${getEnv("VITE_API_BASE_URL")}/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(values),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+         return showToast("error", data.message);
+        
+      }
+        dispatch(setUser(data.user))
+        console.log(data);
+        Navigate(RouteIndex);
+        showToast("success", data.message);
+      
+      
+      
+    } catch (error) {
+      showToast("error", error.message);
+      console.log(error.message);
+    }
   }
 
   return (
     <div className="flex justify-center items-center h-screen w-screen">
       <Card className="w-[450px] p-5">
         <h1 className="text-2xl font-bold text-center mb-4 flex justify-center items-center">
-          Login Into <span className="text-green-500 flex justify-center items-center gap-2 ml-2"> <img src={logo} width={40} /> SnapWrite</span> 
+          Login Into{" "}
+          <span className="text-green-500 flex justify-center items-center gap-2 ml-2">
+            {" "}
+            <img src={logo} width={40} /> SnapWrite
+          </span>
         </h1>
+        <div className="">
+          <GoogleLogin/>
+          <div className="border my-5 flex justify-center items-center">
+            <span className="absolute bg-white text-sm">Or</span>
+          </div>
+        </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="mb-3">
